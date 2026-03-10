@@ -1,0 +1,17 @@
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\bin\Debug\net9.0-windows\Nhiemvu2.6.exe
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\bin\Debug\net9.0-windows\Nhiemvu2.6.deps.json
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\bin\Debug\net9.0-windows\Nhiemvu2.6.runtimeconfig.json
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\bin\Debug\net9.0-windows\Nhiemvu2.6.dll
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\bin\Debug\net9.0-windows\Nhiemvu2.6.pdb
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\obj\Debug\net9.0-windows\Nhiemvu2._6.Form1.resources
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\obj\Debug\net9.0-windows\Nhiemvu2.6.csproj.GenerateResource.cache
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\obj\Debug\net9.0-windows\Nhiemvu2.6.GeneratedMSBuildEditorConfig.editorconfig
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\obj\Debug\net9.0-windows\Nhiemvu2.6.AssemblyInfoInputs.cache
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\obj\Debug\net9.0-windows\Nhiemvu2.6.AssemblyInfo.cs
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\obj\Debug\net9.0-windows\Nhiemvu2.6.csproj.CoreCompileInputs.cache
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\obj\Debug\net9.0-windows\Nhiemvu2.6.sourcelink.json
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\obj\Debug\net9.0-windows\Nhiemvu2.6.dll
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\obj\Debug\net9.0-windows\refint\Nhiemvu2.6.dll
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\obj\Debug\net9.0-windows\Nhiemvu2.6.pdb
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\obj\Debug\net9.0-windows\Nhiemvu2.6.genruntimeconfig.cache
+F:\nopattm\git\NT131.Q22.1\Lab1\Nhiemvu2.6\Nhiemvu2.6\Nhiemvu2.6\obj\Debug\net9.0-windows\ref\Nhiemvu2.6.dll

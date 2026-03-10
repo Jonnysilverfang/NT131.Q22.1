@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "Nhiemvu2.6/1.0.0": {
+        "runtime": {
+          "Nhiemvu2.6.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Nhiemvu2.6/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
