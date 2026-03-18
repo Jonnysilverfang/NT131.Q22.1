@@ -1,0 +1,16 @@
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\bin\Debug\net9.0-windows\Nhiemvu2.7.exe
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\bin\Debug\net9.0-windows\Nhiemvu2.7.deps.json
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\bin\Debug\net9.0-windows\Nhiemvu2.7.runtimeconfig.json
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\bin\Debug\net9.0-windows\Nhiemvu2.7.dll
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\bin\Debug\net9.0-windows\Nhiemvu2.7.pdb
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\obj\Debug\net9.0-windows\Nhiemvu2._7.Form1.resources
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\obj\Debug\net9.0-windows\Nhiemvu2.7.csproj.GenerateResource.cache
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\obj\Debug\net9.0-windows\Nhiemvu2.7.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\obj\Debug\net9.0-windows\Nhiemvu2.7.AssemblyInfoInputs.cache
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\obj\Debug\net9.0-windows\Nhiemvu2.7.AssemblyInfo.cs
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\obj\Debug\net9.0-windows\Nhiemvu2.7.csproj.CoreCompileInputs.cache
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\obj\Debug\net9.0-windows\Nhiemvu2.7.dll
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\obj\Debug\net9.0-windows\refint\Nhiemvu2.7.dll
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\obj\Debug\net9.0-windows\Nhiemvu2.7.pdb
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\obj\Debug\net9.0-windows\Nhiemvu2.7.genruntimeconfig.cache
+C:\Users\LENOVO\OneDrive\Máy tính\nam2_hk2\NT101-An toàn mạng máy tính\lab1\Nhiemvu2.7\obj\Debug\net9.0-windows\ref\Nhiemvu2.7.dll
