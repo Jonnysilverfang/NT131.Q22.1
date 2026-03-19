@@ -1,0 +1,157 @@
+from typing import List, Tuple, Dict
+
+
+class PlayfairCipher:
+    def __init__(self, key: str):
+        self.key = key
+        self.matrix = self._create_matrix(key)
+        self.pos = self._build_position_map()
+
+    def _normalize_key(self, key: str) -> str:
+        key = ''.join(ch.upper() for ch in key if ch.isalpha())
+        key = key.replace('J', 'I')
+
+        seen = set()
+        result = []
+        for ch in key:
+            if ch not in seen:
+                seen.add(ch)
+                result.append(ch)
+        return ''.join(result)
+
+    def _create_matrix(self, key: str) -> List[List[str]]:
+        normalized_key = self._normalize_key(key)
+        alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"  # Không có J
+
+        used = set(normalized_key)
+        full_key = list(normalized_key)
+
+        for ch in alphabet:
+            if ch not in used:
+                full_key.append(ch)
+                used.add(ch)
+
+        matrix = []
+        for i in range(0, 25, 5):
+            matrix.append(full_key[i:i + 5])
+        return matrix
+
+    def _build_position_map(self) -> Dict[str, Tuple[int, int]]:
+        pos = {}
+        for r in range(5):
+            for c in range(5):
+                pos[self.matrix[r][c]] = (r, c)
+        return pos
+
+    def display_matrix(self) -> None:
+        print("\nMa trận Playfair 5x5:")
+        for row in self.matrix:
+            print(' '.join(row))
+        print()
+
+    def _clean_text(self, text: str) -> str:
+        text = ''.join(ch.upper() for ch in text if ch.isalpha())
+        text = text.replace('J', 'I')
+        return text
+
+    def _make_digraphs_for_plaintext(self, plaintext: str) -> List[str]:
+        text = self._clean_text(plaintext)
+        digraphs = []
+        i = 0
+
+        while i < len(text):
+            a = text[i]
+
+            if i + 1 >= len(text):
+                filler = 'X' if a != 'X' else 'Q'
+                digraphs.append(a + filler)
+                i += 1
+            else:
+                b = text[i + 1]
+                if a == b:
+                    filler = 'X' if a != 'X' else 'Q'
+                    digraphs.append(a + filler)
+                    i += 1
+                else:
+                    digraphs.append(a + b)
+                    i += 2
+
+        return digraphs
+
+    def _make_digraphs_for_ciphertext(self, ciphertext: str) -> List[str]:
+        text = self._clean_text(ciphertext)
+
+        if len(text) % 2 != 0:
+            text += 'X'
+
+        return [text[i:i + 2] for i in range(0, len(text), 2)]
+
+    def _encrypt_pair(self, a: str, b: str) -> str:
+        ra, ca = self.pos[a]
+        rb, cb = self.pos[b]
+
+        if ra == rb:
+            return self.matrix[ra][(ca + 1) % 5] + self.matrix[rb][(cb + 1) % 5]
+        elif ca == cb:
+            return self.matrix[(ra + 1) % 5][ca] + self.matrix[(rb + 1) % 5][cb]
+        else:
+            return self.matrix[ra][cb] + self.matrix[rb][ca]
+
+    def _decrypt_pair(self, a: str, b: str) -> str:
+        ra, ca = self.pos[a]
+        rb, cb = self.pos[b]
+
+        if ra == rb:
+            return self.matrix[ra][(ca - 1) % 5] + self.matrix[rb][(cb - 1) % 5]
+        elif ca == cb:
+            return self.matrix[(ra - 1) % 5][ca] + self.matrix[(rb - 1) % 5][cb]
+        else:
+            return self.matrix[ra][cb] + self.matrix[rb][ca]
+
+    def encrypt(self, plaintext: str) -> Tuple[str, List[str]]:
+        digraphs = self._make_digraphs_for_plaintext(plaintext)
+        ciphertext = ''.join(self._encrypt_pair(pair[0], pair[1]) for pair in digraphs)
+        return ciphertext, digraphs
+
+    def decrypt(self, ciphertext: str) -> Tuple[str, List[str]]:
+        digraphs = self._make_digraphs_for_ciphertext(ciphertext)
+        plaintext = ''.join(self._decrypt_pair(pair[0], pair[1]) for pair in digraphs)
+        return plaintext, digraphs
+
+
+def main():
+    print("===== PLAYFAIR CIPHER =====")
+    print("1. Mã hóa")
+    print("2. Giải mã")
+
+    choice = input("Chọn chức năng (1/2): ").strip()
+    key = input("Nhập khóa (key): ").strip()
+
+    cipher = PlayfairCipher(key)
+    cipher.display_matrix()
+
+    if choice == '1':
+        plaintext = input("Nhập plaintext: ")
+        ciphertext, digraphs = cipher.encrypt(plaintext)
+
+        print("Plaintext sau chuẩn hóa và tách cặp:")
+        print(' '.join(digraphs))
+        print("\nCiphertext:")
+        print(ciphertext)
+
+    elif choice == '2':
+        ciphertext = input("Nhập ciphertext: ")
+        plaintext, digraphs = cipher.decrypt(ciphertext)
+
+        print("Ciphertext sau chuẩn hóa và tách cặp:")
+        print(' '.join(digraphs))
+        print("\nPlaintext giải mã:")
+        print(plaintext)
+        print("\nLưu ý: Kết quả có thể còn ký tự đệm X/Q do quy tắc Playfair.")
+
+    else:
+        print("Lựa chọn không hợp lệ.")
+
+
+if __name__ == "__main__":
+    main()
