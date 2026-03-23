@@ -1,0 +1,299 @@
+import math
+import random
+import re
+from collections import Counter
+
+ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ENGLISH_ORDER = "ETAOINSHRDLCUMWFGYPBVKJXQZ"
+
+ENGLISH_FREQ = {
+    "A": 8.167, "B": 1.492, "C": 2.782, "D": 4.253, "E": 12.702,
+    "F": 2.228, "G": 2.015, "H": 6.094, "I": 6.966, "J": 0.153,
+    "K": 0.772, "L": 4.025, "M": 2.406, "N": 6.749, "O": 7.507,
+    "P": 1.929, "Q": 0.095, "R": 5.987, "S": 6.327, "T": 9.056,
+    "U": 2.758, "V": 0.978, "W": 2.360, "X": 0.150, "Y": 1.974, "Z": 0.074,
+}
+
+COMMON_WORDS = {
+    "THE", "BE", "TO", "OF", "AND", "A", "IN", "THAT", "HAVE", "I",
+    "IT", "FOR", "NOT", "ON", "WITH", "HE", "AS", "YOU", "DO", "AT",
+    "THIS", "BUT", "HIS", "BY", "FROM", "THEY", "WE", "SAY", "HER", "SHE",
+    "OR", "AN", "WILL", "MY", "ONE", "ALL", "WOULD", "THERE", "THEIR",
+    "WHAT", "SO", "UP", "OUT", "IF", "ABOUT", "WHO", "GET", "WHICH",
+    "GO", "ME", "WHEN", "MAKE", "CAN", "LIKE", "TIME", "NO", "JUST",
+    "HIM", "KNOW", "TAKE", "PEOPLE", "INTO", "YEAR", "YOUR", "GOOD",
+    "SOME", "COULD", "THEM", "SEE", "OTHER", "THAN", "THEN", "NOW",
+    "LOOK", "ONLY", "COME", "ITS", "OVER", "THINK", "ALSO", "BACK",
+    "AFTER", "USE", "TWO", "HOW", "OUR", "WORK", "FIRST", "WELL",
+    "WAY", "EVEN", "NEW", "WANT", "BECAUSE", "ANY", "THESE", "GIVE",
+    "DAY", "MOST", "US", "IS", "ARE", "WAS", "WERE"
+}
+
+REFERENCE_CORPUS = """
+English text has patterns that appear again and again. The most common letters are E T A O I N S H R D and L.
+The most common short words are the and of to in is you that it he was for on are as with his they at be this from.
+A substitution cipher preserves many language statistics even when every plaintext letter is replaced by another letter.
+That is why frequency analysis, index of coincidence, and n gram scoring can help recover the original message.
+When a text is long enough, common sequences such as THE ING AND ION TIO ERE HER THA and ENT appear many times.
+A good search procedure usually starts from a frequency based key and then improves it by swapping letters.
+Hill climbing with random restarts is a simple and effective method for attacking monoalphabetic substitution ciphers.
+The program should normalize the ciphertext, keep the letters, and score each candidate plaintext by how much it resembles English.
+Natural language has recognizable structure, repeated words, common endings, and balanced vowel distribution.
+If the ciphertext is very short or contains many unusual names, the result may be weaker because the statistics are less stable.
+This reference text is only used to build language frequencies for scoring candidate plaintext during the search process.
+Travel writing, science articles, class notes, and short stories all share many English character patterns.
+The sea breeze was fresh and the water was clear when we visited the coastal city during the holiday.
+Students often test classical ciphers with paragraphs because longer messages produce better statistical evidence.
+A practical solver reports the best plaintext, the key mapping, the final score, and the number of restarts or iterations used.
+"""
+
+def clean_letters(text: str) -> str:
+    return "".join(ch for ch in text.upper() if ch in ALPHABET)
+
+def normalize_raw(text: str) -> str:
+    return "".join(ch.upper() if ch.isalpha() else ch for ch in text)
+
+def build_ngram_model(text: str, n: int):
+    s = clean_letters(text)
+    counts = Counter(s[i:i+n] for i in range(len(s) - n + 1))
+    total = sum(counts.values())
+    logp = {gram: math.log10(cnt / total) for gram, cnt in counts.items()}
+    floor = math.log10(0.01 / total) if total else -10.0
+    return logp, floor
+
+TRI_LOGP, TRI_FLOOR = build_ngram_model(REFERENCE_CORPUS, 3)
+BI_LOGP, BI_FLOOR = build_ngram_model(REFERENCE_CORPUS, 2)
+
+def initial_key_from_frequency(cipher_clean: str):
+    counts = Counter(cipher_clean)
+    cipher_sorted = [ch for ch, _ in counts.most_common()]
+    for ch in ALPHABET:
+        if ch not in cipher_sorted:
+            cipher_sorted.append(ch)
+    key = ["?"] * 26
+    for i, cipher_letter in enumerate(cipher_sorted):
+        key[ord(cipher_letter) - 65] = ENGLISH_ORDER[i]
+    return key
+
+def decrypt_with_key(text: str, key):
+    out = []
+    for ch in text:
+        up = ch.upper()
+        if up in ALPHABET:
+            out.append(key[ord(up) - 65])
+        else:
+            out.append(ch)
+    return "".join(out)
+
+def chi_square_score(clean_plain: str):
+    if not clean_plain:
+        return -1e9
+    counts = Counter(clean_plain)
+    n = len(clean_plain)
+    chi = 0.0
+    for ch in ALPHABET:
+        observed = counts.get(ch, 0)
+        expected = ENGLISH_FREQ[ch] * n / 100.0
+        if expected > 0:
+            chi += ((observed - expected) ** 2) / expected
+    return -chi
+
+def index_of_coincidence(clean_text: str):
+    n = len(clean_text)
+    if n < 2:
+        return 0.0
+    counts = Counter(clean_text)
+    num = sum(v * (v - 1) for v in counts.values())
+    den = n * (n - 1)
+    return num / den
+
+def word_bonus(raw_plain: str):
+    tokens = re.findall(r"[A-Z]+", raw_plain)
+    score = 0.0
+    for token in tokens:
+        if token in COMMON_WORDS:
+            score += 6.0 + len(token) * 1.5
+        elif len(token) >= 4:
+            if token.endswith(("ING", "ION", "ENT", "ERS", "ED", "LY")):
+                score += 2.0
+            if token.startswith(("TH", "WH", "RE", "IN", "DE", "CO")):
+                score += 1.5
+    return score
+
+def ngram_score(clean_plain: str):
+    if len(clean_plain) < 3:
+        return -1e9
+    score = 0.0
+    for i in range(len(clean_plain) - 2):
+        tri = clean_plain[i:i+3]
+        score += TRI_LOGP.get(tri, TRI_FLOOR)
+    for i in range(len(clean_plain) - 1):
+        bi = clean_plain[i:i+2]
+        score += 0.35 * BI_LOGP.get(bi, BI_FLOOR)
+    return score
+
+def score_plaintext(raw_plain: str):
+    clean_plain = clean_letters(raw_plain)
+    if not clean_plain:
+        return -1e9
+    score = 0.0
+    score += 4.0 * ngram_score(clean_plain)
+    score += 1.5 * chi_square_score(clean_plain)
+    ioc = index_of_coincidence(clean_plain)
+    score -= abs(ioc - 0.0667) * 250.0
+    score += word_bonus(raw_plain)
+    vowel_ratio = sum(clean_plain.count(v) for v in "AEIOU") / len(clean_plain)
+    score -= abs(vowel_ratio - 0.38) * 50.0
+    uncommon_penalty = clean_plain.count("Q") + clean_plain.count("Z") + clean_plain.count("X") + clean_plain.count("J")
+    score -= uncommon_penalty * 0.4
+    return score
+
+def swap_key(key, i, j):
+    new_key = key[:]
+    new_key[i], new_key[j] = new_key[j], new_key[i]
+    return new_key
+
+def hill_climb(cipher_raw: str, start_key, max_rounds=100):
+    current_key = start_key[:]
+    current_plain = decrypt_with_key(cipher_raw, current_key)
+    current_score = score_plaintext(current_plain)
+    improved = True
+    rounds = 0
+    total_improvements = 0
+
+    while improved and rounds < max_rounds:
+        improved = False
+        best_neighbor_score = current_score
+        best_neighbor_key = current_key
+        best_neighbor_plain = current_plain
+
+        for i in range(26):
+            for j in range(i + 1, 26):
+                candidate_key = swap_key(current_key, i, j)
+                candidate_plain = decrypt_with_key(cipher_raw, candidate_key)
+                candidate_score = score_plaintext(candidate_plain)
+                if candidate_score > best_neighbor_score:
+                    best_neighbor_score = candidate_score
+                    best_neighbor_key = candidate_key
+                    best_neighbor_plain = candidate_plain
+                    improved = True
+
+        if improved:
+            current_key = best_neighbor_key
+            current_plain = best_neighbor_plain
+            current_score = best_neighbor_score
+            total_improvements += 1
+        rounds += 1
+
+    return {
+        "key": current_key,
+        "plaintext": current_plain,
+        "score": current_score,
+        "rounds": rounds,
+        "improvements": total_improvements,
+    }
+
+def randomize_key(base_key, swaps=8):
+    key = base_key[:]
+    for _ in range(swaps):
+        i, j = random.sample(range(26), 2)
+        key[i], key[j] = key[j], key[i]
+    return key
+
+def solve_substitution(cipher_raw: str, restarts=20, seed=42):
+    random.seed(seed)
+    cipher_raw = normalize_raw(cipher_raw)
+    cipher_clean = clean_letters(cipher_raw)
+
+    if len(cipher_clean) < 20:
+        print("Cảnh báo: ciphertext quá ngắn, kết quả có thể không chính xác.\n")
+
+    base_key = initial_key_from_frequency(cipher_clean)
+    best = hill_climb(cipher_raw, base_key)
+    history = [best["score"]]
+
+    for r in range(1, restarts + 1):
+        perturbed = randomize_key(base_key, swaps=random.randint(4, 12))
+        candidate = hill_climb(cipher_raw, perturbed)
+        history.append(candidate["score"])
+        if candidate["score"] > best["score"]:
+            best = candidate
+            best["best_restart"] = r
+
+    best["history"] = history
+    best["ciphertext_length"] = len(cipher_clean)
+    best["restarts"] = restarts
+    best.setdefault("best_restart", 0)
+    return best
+
+def print_key_table(key):
+    print("Bảng ánh xạ (cipher -> plain):")
+    print("Cipher :", " ".join(ALPHABET))
+    print("Plain  :", " ".join(key))
+    print()
+
+def read_ciphertext():
+    print("=== CHƯƠNG TRÌNH GIẢI MÃ TỰ ĐỘNG MONO-ALPHABETIC SUBSTITUTION CIPHER ===")
+    print("1. Nhập ciphertext trực tiếp")
+    print("2. Đọc ciphertext từ file .txt")
+    choice = input("Chọn (1/2): ").strip()
+
+    if choice == "1":
+        print("\nNhập ciphertext. Gõ dòng trống để kết thúc:")
+        lines = []
+        while True:
+            line = input()
+            if line == "":
+                break
+            lines.append(line)
+        return "\n".join(lines)
+    elif choice == "2":
+        path = input("Nhập đường dẫn file: ").strip()
+        with open(path, "r", encoding="utf-8") as f:
+            return f.read()
+    else:
+        raise ValueError("Lựa chọn không hợp lệ.")
+
+def main():
+    try:
+        ciphertext = read_ciphertext()
+        restarts_raw = input("Số lần random restart (mặc định 20): ").strip()
+        restarts = int(restarts_raw) if restarts_raw else 20
+
+        result = solve_substitution(ciphertext, restarts=restarts)
+
+        print("\n================ KẾT QUẢ TỐT NHẤT ================\n")
+        print(f"Độ dài ciphertext (chỉ tính chữ cái): {result['ciphertext_length']}")
+        print(f"Số lần random restart: {result['restarts']}")
+        print(f"Restart tốt nhất: {result['best_restart']}")
+        print(f"Số vòng hill-climbing: {result['rounds']}")
+        print(f"Số lần cải thiện khóa: {result['improvements']}")
+        print(f"Điểm số cuối cùng: {result['score']:.4f}\n")
+
+        print_key_table(result["key"])
+
+        print("Plaintext tốt nhất tìm được:\n")
+        print(result["plaintext"])
+
+        save = input("\nBạn có muốn lưu kết quả ra file không? (y/n): ").strip().lower()
+        if save == "y":
+            out_path = input("Nhập tên file output (ví dụ ketqua.txt): ").strip()
+            with open(out_path, "w", encoding="utf-8") as f:
+                f.write("=== KET QUA GIAI MA TU DONG ===\n\n")
+                f.write(f"Do dai ciphertext: {result['ciphertext_length']}\n")
+                f.write(f"So lan random restart: {result['restarts']}\n")
+                f.write(f"Restart tot nhat: {result['best_restart']}\n")
+                f.write(f"So vong hill-climbing: {result['rounds']}\n")
+                f.write(f"So lan cai thien khoa: {result['improvements']}\n")
+                f.write(f"Diem so cuoi cung: {result['score']:.4f}\n\n")
+                f.write("Bang anh xa (cipher -> plain)\n")
+                f.write("Cipher : " + " ".join(ALPHABET) + "\n")
+                f.write("Plain  : " + " ".join(result["key"]) + "\n\n")
+                f.write("Plaintext tot nhat tim duoc:\n")
+                f.write(result["plaintext"] + "\n")
+            print("Đã lưu kết quả thành công.")
+    except Exception as e:
+        print(f"Lỗi: {e}")
+
+if __name__ == "__main__":
+    main()
