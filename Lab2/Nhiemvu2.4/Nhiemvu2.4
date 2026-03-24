@@ -1,0 +1,63 @@
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+import os
+
+def tao_du_lieu():
+    return bytes([i % 256 for i in range(1000)]) #Tao 1000 byte du lieu mau
+
+def lat_1_bit(data, vi_tri_byte, bit_index=0): #Dung de co y dao 1 bit o byte thu 26 cua ban ma
+    tam = bytearray(data)
+    tam[vi_tri_byte] ^= (1 << bit_index)
+    return bytes(tam)
+
+def dem_khoi_hong(goc, loi, kich_thuoc_khoi=16): #Chia du lieu thanh cac block 16 byte va kiem tra block nao bi thay doi
+    so_khoi = len(goc) // kich_thuoc_khoi
+    ds_khoi_hong = []
+
+    for i in range(so_khoi):
+        a = goc[i * kich_thuoc_khoi:(i + 1) * kich_thuoc_khoi]
+        b = loi[i * kich_thuoc_khoi:(i + 1) * kich_thuoc_khoi]
+        if a != b:
+            ds_khoi_hong.append(i)
+
+    return ds_khoi_hong
+
+def thu_mode(mode_ten, mode, data, key, iv=None): #thuc hien ma hoa, gay loi ban ma, giai ma lai va thong ke so khoi bi hong cho tung mode
+    if iv is not None:
+        cipher = AES.new(key, mode, iv=iv)
+    else:
+        cipher = AES.new(key, mode)
+
+    ct = cipher.encrypt(pad(data, 16))
+
+    ct_loi = lat_1_bit(ct, 25, 0)   # byte thu 26 => index 25
+
+    if iv is not None:
+        cipher_giai_ma = AES.new(key, mode, iv=iv)
+    else:
+        cipher_giai_ma = AES.new(key, mode)
+
+    pt_loi = cipher_giai_ma.decrypt(ct_loi)
+
+    if mode in [AES.MODE_ECB, AES.MODE_CBC]:
+        pt_loi = unpad(pt_loi, 16)
+
+    khoi_hong = dem_khoi_hong(data, pt_loi[:len(data)])
+
+    print(f"Mode: {mode_ten}")
+    print("So khoi bi hong:", len(khoi_hong))
+    print("Cac khoi bi hong:", khoi_hong)
+    print("-" * 40)
+
+def main():
+    data = tao_du_lieu()
+    key = b'1234567890abcdef'
+    iv = b'abcdef1234567890'
+
+    thu_mode("ECB", AES.MODE_ECB, data, key)
+    thu_mode("CBC", AES.MODE_CBC, data, key, iv)
+    thu_mode("CFB", AES.MODE_CFB, data, key, iv)
+    thu_mode("OFB", AES.MODE_OFB, data, key, iv)
+
+if __name__ == "__main__":
+    main()
