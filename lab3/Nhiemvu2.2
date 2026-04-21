@@ -1,0 +1,27 @@
+import hashlib, re
+
+def read_hex(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return re.sub(r"\s+", "", f.read())
+
+h1 = read_hex("m1.hex")
+h2 = read_hex("m2.hex")
+
+print("len hex m1 =", len(h1))
+print("len hex m2 =", len(h2))
+
+m1 = bytes.fromhex(h1)
+m2 = bytes.fromhex(h2)
+
+print("len bytes m1 =", len(m1))
+print("len bytes m2 =", len(m2))
+
+diff = sum(a != b for a, b in zip(m1, m2))
+print("so byte khac nhau =", diff)
+
+md5_1 = hashlib.md5(m1).hexdigest()
+md5_2 = hashlib.md5(m2).hexdigest()
+
+print("md5 m1 =", md5_1)
+print("md5 m2 =", md5_2)
+print("md5 giong nhau =", md5_1 == md5_2)
