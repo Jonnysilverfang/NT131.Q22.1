@@ -1,0 +1,43 @@
+import hashlib
+
+# Đọc modulus n của CA
+with open("ca_modulus.hex", "r") as f:
+    n_hex = f.read().strip()
+
+# Đọc chữ ký của chứng chỉ máy chủ
+with open("sig.hex", "r") as f:
+    sig_hex = f.read().strip()
+
+# Exponent của CA
+e = 65537
+
+# Đọc phần thân chứng chỉ (TBS)
+with open("c0_body.bin", "rb") as f:
+    body = f.read()
+
+# Tính SHA-256 của phần thân chứng chỉ
+computed_hash = hashlib.sha256(body).digest()
+print("SHA-256(TBS) =", computed_hash.hex())
+
+# Chuyển dữ liệu sang số nguyên
+n = int(n_hex, 16)
+S = int(sig_hex, 16)
+
+# Xác minh RSA
+em_int = pow(S, e, n)
+
+# Chuyển về bytes theo độ dài modulus
+k = (n.bit_length() + 7) // 8
+em = em_int.to_bytes(k, byteorder="big")
+
+print("EM =", em.hex())
+
+# Lấy 32 byte cuối, chính là SHA-256
+hash_from_sig = em[-32:]
+print("Hash from signature =", hash_from_sig.hex())
+
+# So sánh
+if hash_from_sig == computed_hash:
+    print("KET LUAN: Chung chi HOP LE")
+else:
+    print("KET LUAN: Chung chi KHONG hop le")
