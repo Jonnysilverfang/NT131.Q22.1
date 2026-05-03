@@ -1,4 +1,4 @@
-cat > ~/Lab04-Trivy/README.md << 'EOF'
+
 # Lab04 - Task 2.4 - Vulnerability Scanning with Trivy
 
 ## Thông tin nhóm
