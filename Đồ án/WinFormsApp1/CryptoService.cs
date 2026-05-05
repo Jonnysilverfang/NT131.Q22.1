@@ -1,9 +1,9 @@
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace WinFormsApp1;
+namespace DoAnCryptoWeb;
 
-internal static class CryptoService
+public static class CryptoService
 {
     public static string PlayfairEncrypt(string plainText, string key)
     {

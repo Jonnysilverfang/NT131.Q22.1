@@ -1,0 +1,350 @@
+﻿<!doctype html>
+<html class="light" lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NT101.Q22 Group07 | Ứng dụng mã hóa PlayFair và RSA</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            tertiary: "#3b1c00",
+            "surface-container-low": "#f5f3ee",
+            surface: "#fbf9f4",
+            "inverse-on-surface": "#f2f1ec",
+            "on-secondary-fixed": "#002020",
+            "on-primary-fixed": "#001c38",
+            "tertiary-fixed-dim": "#ffb77e",
+            "secondary-container": "#97f2f0",
+            outline: "#737780",
+            "on-tertiary-fixed-variant": "#6b3b0b",
+            "on-error": "#ffffff",
+            "on-secondary-container": "#00706f",
+            "outline-variant": "#c3c6d0",
+            "secondary-fixed": "#97f2f0",
+            "secondary-fixed-dim": "#7bd5d4",
+            "on-error-container": "#93000a",
+            "on-tertiary": "#ffffff",
+            "inverse-surface": "#30312e",
+            "on-surface": "#1b1c19",
+            "on-tertiary-fixed": "#2f1500",
+            "on-secondary": "#ffffff",
+            "on-primary-container": "#81a6d7",
+            "inverse-primary": "#a4c9fc",
+            "on-surface-variant": "#42474f",
+            "primary-fixed": "#d3e4ff",
+            "error-container": "#ffdad6",
+            "on-primary-fixed-variant": "#204874",
+            primary: "#002546",
+            "surface-container-lowest": "#ffffff",
+            "tertiary-container": "#5b2e00",
+            "on-secondary-fixed-variant": "#00504f",
+            "surface-dim": "#dbdad5",
+            "surface-container-high": "#eae8e3",
+            "on-primary": "#ffffff",
+            "tertiary-fixed": "#ffdcc3",
+            "surface-container-highest": "#e4e2dd",
+            "primary-fixed-dim": "#a4c9fc",
+            "on-background": "#1b1c19",
+            error: "#ba1a1a",
+            "on-tertiary-container": "#d7955f",
+            "primary-container": "#0d3b66",
+            secondary: "#006a69",
+            background: "#fbf9f4",
+            "surface-tint": "#3a608d",
+            "surface-variant": "#e4e2dd",
+            "surface-container": "#f0eee9",
+            "surface-bright": "#fbf9f4"
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          },
+          spacing: {
+            "stack-lg": "3rem",
+            gutter: "1.5rem",
+            "stack-sm": "0.5rem",
+            "container-max": "1280px",
+            "stack-md": "1.5rem",
+            "edge-margin": "2rem"
+          },
+          fontFamily: {
+            "body-md": ["Be Vietnam Pro", "sans-serif"],
+            "mono-code": ["Space Grotesk", "monospace"],
+            "headline-lg": ["Be Vietnam Pro", "sans-serif"],
+            "display-xl": ["Be Vietnam Pro", "sans-serif"],
+            "body-lg": ["Be Vietnam Pro", "sans-serif"],
+            "headline-md": ["Be Vietnam Pro", "sans-serif"],
+            "label-sm": ["Inter", "sans-serif"]
+          },
+          fontSize: {
+            "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+            "mono-code": ["14px", { lineHeight: "1.5", fontWeight: "400" }],
+            "headline-lg": ["32px", { lineHeight: "1.3", fontWeight: "600" }],
+            "display-xl": ["48px", { lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+            "headline-md": ["24px", { lineHeight: "1.4", fontWeight: "600" }],
+            "label-sm": ["13px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "500" }]
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col overflow-x-hidden">
+  <nav class="fixed top-0 w-full z-50 border-b border-white/20 bg-white/60 backdrop-blur-xl shadow-sm">
+    <div class="flex justify-between items-center px-6 md:px-8 py-4 max-w-7xl mx-auto">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary">encrypted</span>
+        <span class="text-xl font-bold tracking-tighter text-blue-900 font-headline-lg">NT101.Q22 Group07</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-grow pt-24 pb-12 px-4 sm:px-6 max-w-7xl mx-auto w-full xl:pl-72">
+    <header class="text-center mb-stack-lg flex flex-col items-center">
+      <h1 class="font-display-xl text-4xl md:text-display-xl text-primary mb-4 leading-tight">Ứng dụng mã hóa PlayFair và RSA</h1>
+    </header>
+
+    <div class="flex justify-center mb-stack-md">
+      <div class="inline-flex glass-card p-1.5 rounded-xl border border-white/40 shadow-sm">
+        <button class="tab active flex items-center gap-2 px-6 md:px-8 py-3 rounded-lg font-semibold transition-all" data-target="playfair">
+          <span class="material-symbols-outlined">grid_view</span>
+          PlayFair
+        </button>
+        <button class="tab flex items-center gap-2 px-6 md:px-8 py-3 rounded-lg font-semibold transition-all" data-target="rsa">
+          <span class="material-symbols-outlined">enhanced_encryption</span>
+          RSA
+        </button>
+      </div>
+    </div>
+
+    <section id="playfair" class="panel active space-y-stack-md">
+      <div class="glass-card p-gutter rounded-xl flex flex-col md:flex-row justify-between md:items-center gap-4 shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center text-secondary">
+            <span class="material-symbols-outlined filled">grid_view</span>
+          </div>
+          <div>
+            <h2 class="font-headline-md text-headline-md text-primary">Mã hóa PlayFair cổ điển</h2>
+            <p class="text-on-surface-variant text-label-sm">Cipher định hướng ma trận 5x5</p>
+          </div>
+        </div>
+        <button class="info-button border-secondary text-secondary" data-info="playfair">
+          <span class="material-symbols-outlined text-[20px]">info</span>
+          Nguyên lý hoạt động
+        </button>
+      </div>
+
+      <div class="glass-card p-gutter rounded-xl shadow-sm border-l-4 border-l-secondary">
+        <label class="block font-label-sm text-secondary uppercase tracking-widest mb-3" for="playfairKey">Khóa PlayFair</label>
+        <input id="playfairKey" class="lab-input" placeholder="Nhập khóa (ví dụ: MONARCHY)..." type="text">
+        <p class="mt-2 text-xs text-on-surface-variant italic">Lưu ý: Các ký tự trùng lặp sẽ được loại bỏ và J được thay thế bằng I.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+        <article class="glass-card p-gutter rounded-xl shadow-sm flex flex-col gap-4 border-t border-white/50">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="material-symbols-outlined text-secondary">lock_open</span>
+            <h3 class="font-headline-md text-[20px] text-primary">Tiến trình Mã hóa</h3>
+          </div>
+          <div class="space-y-4">
+            <label class="block">
+              <span class="block text-label-sm text-on-surface-variant mb-2">Bản rõ đầu vào</span>
+              <textarea id="playfairPlain" class="lab-textarea" placeholder="Nhập văn bản cần mã hóa..." rows="4"></textarea>
+            </label>
+            <label class="block bg-secondary-container/10 p-4 rounded-lg border border-secondary/20">
+              <span class="block text-label-sm text-secondary mb-2 font-semibold">Bản mã kết quả</span>
+              <textarea id="playfairCipherOut" class="lab-textarea result secondary-result" placeholder="Kết quả mã hóa sẽ xuất hiện tại đây..." readonly rows="4"></textarea>
+            </label>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 mt-4">
+            <button id="playfairEncrypt" class="flex-grow bg-secondary text-on-secondary py-3 rounded-lg font-semibold shadow-md hover:brightness-110 active:scale-[0.98] transition-all">Mã hóa PlayFair</button>
+            <button id="playfairMove" class="px-4 py-3 bg-surface-container-high text-on-surface rounded-lg font-medium hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">swap_horiz</span>
+              <span class="sm:hidden">Chuyển sang giải mã</span>
+            </button>
+          </div>
+        </article>
+
+        <article class="glass-card p-gutter rounded-xl shadow-sm flex flex-col gap-4 border-t border-white/50">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="material-symbols-outlined text-on-surface-variant">key</span>
+            <h3 class="font-headline-md text-[20px] text-primary">Tiến trình Giải mã</h3>
+          </div>
+          <div class="space-y-4">
+            <label class="block">
+              <span class="block text-label-sm text-on-surface-variant mb-2">Bản mã đầu vào</span>
+              <textarea id="playfairCipherIn" class="lab-textarea" placeholder="Nhập bản mã cần giải mã..." rows="4"></textarea>
+            </label>
+            <label class="block bg-surface-container-low p-4 rounded-lg border border-outline-variant/30">
+              <span class="block text-label-sm text-on-surface-variant mb-2 font-semibold">Bản rõ giải mã</span>
+              <textarea id="playfairPlainOut" class="lab-textarea result" placeholder="Văn bản gốc sau khi giải mã..." readonly rows="4"></textarea>
+            </label>
+          </div>
+          <button id="playfairDecrypt" class="mt-4 w-full border-2 border-secondary text-secondary py-3 rounded-lg font-semibold hover:bg-secondary/5 active:scale-[0.98] transition-all">Giải mã PlayFair</button>
+        </article>
+      </div>
+
+      <div class="status-shell">
+        <div class="flex items-center gap-2 text-secondary font-medium">
+          <span class="material-symbols-outlined text-[18px]">check_circle</span>
+          <span id="playfairStatus" class="text-body-md">PlayFair: sẵn sàng xử lý.</span>
+        </div>
+        <button id="playfairClear" class="clear-button">
+          <span class="material-symbols-outlined text-[20px]">delete</span>
+          Xóa toàn bộ
+        </button>
+      </div>
+    </section>
+
+    <section id="rsa" class="panel space-y-stack-md">
+      <div class="glass-card p-gutter rounded-xl flex flex-col md:flex-row justify-between md:items-center gap-4 shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center text-on-primary-container">
+            <span class="material-symbols-outlined filled">enhanced_encryption</span>
+          </div>
+          <div>
+            <h2 class="font-headline-md text-headline-md text-primary">Mã hóa RSA hiện đại</h2>
+            <p class="text-on-surface-variant text-label-sm">Hệ mã hóa công khai bất đối xứng</p>
+          </div>
+        </div>
+        <button class="info-button border-primary-container text-primary-container" data-info="rsa">
+          <span class="material-symbols-outlined text-[20px]">info</span>
+          Nguyên lý hoạt động
+        </button>
+      </div>
+
+      <article class="glass-card p-gutter rounded-xl shadow-sm border-l-4 border-l-primary-container">
+        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
+          <div>
+            <h3 class="font-headline-md text-[20px] text-primary">Quản lý khóa</h3>
+            <p class="text-on-surface-variant text-sm mt-1">RSA dùng một cặp khóa gồm khóa công khai và khóa bí mật.</p>
+          </div>
+          <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+            <label class="text-label-sm text-on-surface-variant">
+              <span class="sr-only">Độ dài khóa</span>
+              <select id="rsaKeySize" class="bg-white/40 border border-outline-variant rounded-lg px-4 py-2 text-body-md">
+                <option>1024</option>
+                <option selected>2048</option>
+                <option>3072</option>
+                <option>4096</option>
+              </select>
+            </label>
+            <button id="rsaGenerate" class="bg-primary-container text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:brightness-110 active:scale-[0.98] transition-all">Tạo khóa tự động</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+          <label class="block">
+            <span class="block text-label-sm text-on-surface-variant mb-2">Khóa công khai PEM</span>
+            <textarea id="rsaPublicKey" class="lab-textarea text-[12px]" placeholder="-----BEGIN PUBLIC KEY-----" rows="6"></textarea>
+          </label>
+          <label class="block">
+            <span class="block text-label-sm text-on-surface-variant mb-2">Khóa bí mật PEM</span>
+            <textarea id="rsaPrivateKey" class="lab-textarea text-[12px]" placeholder="-----BEGIN PRIVATE KEY-----" rows="6"></textarea>
+          </label>
+        </div>
+      </article>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+        <article class="glass-card p-gutter rounded-xl shadow-sm flex flex-col gap-4 border-t border-white/50">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="material-symbols-outlined text-primary-container">lock</span>
+            <h3 class="font-headline-md text-[20px] text-primary">Tiến trình Mã hóa</h3>
+          </div>
+          <label class="block">
+            <span class="block text-label-sm text-on-surface-variant mb-2">Bản rõ đầu vào</span>
+            <textarea id="rsaPlain" class="lab-textarea" placeholder="Nhập văn bản cần mã hóa..." rows="4"></textarea>
+          </label>
+          <label class="block bg-primary-fixed/30 p-4 rounded-lg border border-primary-container/20">
+            <span class="block text-label-sm text-primary-container mb-2 font-semibold">Cipher Base64 ra</span>
+            <textarea id="rsaCipherOut" class="lab-textarea result primary-result" placeholder="Cipher Base64 sẽ xuất hiện tại đây..." readonly rows="4"></textarea>
+          </label>
+          <div class="flex flex-col sm:flex-row gap-3 mt-4">
+            <button id="rsaEncrypt" class="flex-grow bg-primary-container text-white py-3 rounded-lg font-semibold shadow-md hover:brightness-110 active:scale-[0.98] transition-all">Mã hóa RSA</button>
+            <button id="rsaMove" class="px-4 py-3 bg-surface-container-high text-on-surface rounded-lg font-medium hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">swap_horiz</span>
+              <span class="sm:hidden">Chuyển sang giải mã</span>
+            </button>
+          </div>
+        </article>
+
+        <article class="glass-card p-gutter rounded-xl shadow-sm flex flex-col gap-4 border-t border-white/50">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="material-symbols-outlined text-on-surface-variant">vpn_key</span>
+            <h3 class="font-headline-md text-[20px] text-primary">Tiến trình Giải mã</h3>
+          </div>
+          <label class="block">
+            <span class="block text-label-sm text-on-surface-variant mb-2">Cipher Base64 vào</span>
+            <textarea id="rsaCipherIn" class="lab-textarea" placeholder="Nhập bản mã Base64 cần giải mã..." rows="4"></textarea>
+          </label>
+          <label class="block bg-surface-container-low p-4 rounded-lg border border-outline-variant/30">
+            <span class="block text-label-sm text-on-surface-variant mb-2 font-semibold">Bản rõ kết quả</span>
+            <textarea id="rsaPlainOut" class="lab-textarea result" placeholder="Văn bản gốc sau khi giải mã..." readonly rows="4"></textarea>
+          </label>
+          <button id="rsaDecrypt" class="mt-4 w-full border-2 border-primary-container text-primary-container py-3 rounded-lg font-semibold hover:bg-primary-container/5 active:scale-[0.98] transition-all">Giải mã RSA</button>
+        </article>
+      </div>
+
+      <div class="status-shell">
+        <div class="flex items-center gap-2 text-primary-container font-medium">
+          <span class="material-symbols-outlined text-[18px]">check_circle</span>
+          <span id="rsaStatus" class="text-body-md">RSA: sẵn sàng tạo khóa và xử lý.</span>
+        </div>
+        <button id="rsaClear" class="clear-button">
+          <span class="material-symbols-outlined text-[20px]">delete</span>
+          Xóa toàn bộ
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <aside class="fixed left-0 top-0 w-64 flex-col p-4 z-40 bg-white/40 backdrop-blur-md h-[calc(100vh-80px)] mt-20 rounded-r-2xl border-r border-white/10 shadow-[20px_0_30px_rgba(13,59,102,0.08)] hidden xl:flex">
+    <div class="mb-8">
+      <h4 class="font-black uppercase tracking-widest text-slate-900 font-label-sm">Cryptographic Lab</h4>
+      <p class="text-slate-500 text-[11px]">Academic Research v2.4</p>
+    </div>
+    <nav class="space-y-2 flex-grow">
+      <button class="lab-link active" data-target="playfair">
+        <span class="material-symbols-outlined">grid_view</span>
+        <span>PlayFair Cipher</span>
+      </button>
+      <button class="lab-link" data-target="rsa">
+        <span class="material-symbols-outlined">enhanced_encryption</span>
+        <span>RSA Encryption</span>
+      </button>
+    </nav>
+    <button class="mt-auto w-full bg-primary-container text-white py-4 rounded-xl font-bold uppercase text-[12px] tracking-widest shadow-lg hover:brightness-110 active:scale-95 transition-all" data-target="rsa" data-tab-shortcut>Generate Keys</button>
+  </aside>
+
+  <div class="fixed top-0 right-0 -z-10 w-1/2 h-1/2 opacity-20 pointer-events-none crypto-orb"></div>
+
+  <dialog id="infoDialog">
+    <div class="dialog-head">
+      <h2 id="dialogTitle"></h2>
+      <button id="dialogClose" aria-label="Đóng">×</button>
+    </div>
+    <pre id="dialogBody"></pre>
+  </dialog>
+
+  <footer class="w-full py-6 px-6 md:px-12 flex justify-center items-center mt-auto border-t border-slate-200 bg-slate-50/80 backdrop-blur-md xl:pl-72">
+    <span class="font-bold text-slate-800 text-label-sm uppercase tracking-widest">NT101.Q22 Group07</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
+
+
+
